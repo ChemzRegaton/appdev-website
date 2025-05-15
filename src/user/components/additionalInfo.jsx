@@ -127,7 +127,7 @@ function AdditionalInfo({ onClose, onProfileUpdated, initialProfileData }) {
             {successMessage && <p className="successMessage">{successMessage}</p>}
             <form className="bookInput" onSubmit={(e) => { e.preventDefault(); handleUpdateProfile(); }}>
                 <section className="addInputs">
-                <p style={{ color: 'white', margin: '-4px' }}>Fullname:</p>
+                <p style={{ color: 'white', margin: '-4px', height: "10vh"}}>Fullname:</p>
                 <input
                     className="input"
                     placeholder="Fullname"
