@@ -36,35 +36,29 @@ function AdminHome() {
             const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/books/');
             setTotalBooks(response.data.total_books);
             console.log("Books Response:", response.data);
+
+
         } catch (error) {
             console.error('Error fetching total books:', error);
             setError('Failed to fetch total books.');
         }
     };
 
-const fetchTotalBorrowedBooks = async () => {
-    const token = localStorage.getItem('authToken');
-    try {
-        const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
-            headers: {
-                'Authorization': `Token ${token}`,
-            },
-        });
-
-        const records = Array.isArray(response.data) ? response.data : response.data.results || [];
-
-        const currentlyBorrowed = records.filter(record => !record.is_returned).length;
-        const returnedCount = records.filter(record => record.is_returned).length;
-
-        setTotalBorrowedBooks(currentlyBorrowed);
-        setReturnedBooksCount(returnedCount);
-        setAllBorrowingRecords(records);
-        console.log("Response received:", response.data);
-    } catch (error) {
-        console.error('Error fetching borrowing records:', error);
-    }
-};
-
+    const fetchTotalBorrowedBooks = async () => {
+        const token = localStorage.getItem('authToken');
+        try {
+            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
+                headers: {
+                    'Authorization': `Token ${token}`,
+                },
+            });
+            setTotalBorrowedBooks(response.data.totalBorrowedRecords);
+            setAllBorrowingRecords(response.data.borrowingRecords);
+            console.log("Borrow Records Response:", response.data);
+        } catch (error) {
+            console.error('Error fetching borrowing records:', error);
+        }
+    };
 
     const fetchBorrowRequests = async () => {
         try {
@@ -109,10 +103,8 @@ const fetchTotalBorrowedBooks = async () => {
                 }
             );
             console.log(`Request ${requestId} accepted successfully:`, response.data);
-            // After accepting a request, re-fetch the borrow requests to update the list
-            fetchBorrowRequests();
-            // It might also be a good idea to re-fetch the borrowed books count
-            fetchTotalBorrowedBooks();
+
+            // No longer removing the request from local state here
         } catch (error) {
             console.error(`Error accepting request:`, error);
             setError('Failed to accept request.');
@@ -131,9 +123,10 @@ const fetchTotalBorrowedBooks = async () => {
     const UserProfileImage = ({ profilePicture }) => {
         const getValidImageSource = () => {
             if (profilePicture) {
-                return profilePicture.startsWith('http') || profilePicture.startsWith('data:image') ? profilePicture : `${window.location.origin}${profilePicture}`;
+                return  profilePicture.startsWith('http') ||  profilePicture.startsWith('data:image') ? profilePicture : `${window.location.origin}${profilePicture}`;
             }
             return defaultProfileImage;
+
         };
 
         const src = getValidImageSource();
@@ -158,6 +151,7 @@ const fetchTotalBorrowedBooks = async () => {
                         objectFit: 'cover',
                     }}
                 />
+
             </div>
         );
     };
@@ -206,6 +200,7 @@ const fetchTotalBorrowedBooks = async () => {
                         <section key={request.id} className='userNotify' style={{ alignItems: 'center', maxWidth: '200vh' }}>
                             <UserProfileImage
                                 profilePicture={request.requester_profile?.profile_picture}
+
                             />
                             <section
                                 className='userNotifyDetails'
@@ -233,6 +228,7 @@ const fetchTotalBorrowedBooks = async () => {
                     ))}
                     {borrowRequests.length === 0 && <p>No new borrow requests.</p>}
                 </section>
+
             </section>
         </div>
     );
