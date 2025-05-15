@@ -222,7 +222,7 @@ function AdditionalInfo({ onClose, onProfileUpdated, initialProfileData }) {
                         onChange={handleChange}
                     />
                 </section >
-                    <section style={{display: "flex", flexDirection: "row", height: "5vh"}}>
+                    <section style={{display: "flex", flexDirection: "row", height: "fit-content"}}>
                             <button className='submit' disabled={isSubmitting}>
                         {isSubmitting ? 'Submitting...' : 'Submit'}
                     </button>
