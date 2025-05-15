@@ -122,7 +122,7 @@ function AdditionalInfo({ onClose, onProfileUpdated, initialProfileData }) {
     
     return (
         <div className="addBookPanelContainer"> {/* Keep the styling class if needed */}
-            <h2 style={{ color: 'white' }}>Edit Additional Information:</h2>
+            <h2 style={{ color: 'white' , marginBottom: "8vh"}}>Edit Additional Information:</h2>
             {errorMessage && <p className="errorMessage">{errorMessage}</p>}
             {successMessage && <p className="successMessage">{successMessage}</p>}
             <form className="bookInput" onSubmit={(e) => { e.preventDefault(); handleUpdateProfile(); }}>
