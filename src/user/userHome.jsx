@@ -1,4 +1,3 @@
-// In UserHome.jsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './userHome.css';
@@ -177,58 +176,47 @@ function UserHome() {
         }
     };
 
-    const handleBookReturnedFromAdmin = () => {
-        console.log('handleBookReturnedFromAdmin called');
-        const storedRequestCount = parseInt(localStorage.getItem('requestCount')) || 0;
-        console.log('handleBookReturnedFromAdmin - Stored requestCount from localStorage:', storedRequestCount);
-        // Directly update the requestCount from localStorage and then trigger a re-fetch
-        setRequestCount(storedRequestCount);
-        console.log('handleBookReturnedFromAdmin - requestCount state set to:', storedRequestCount);
-        setRefreshUserHome(prev => !prev);
-    };
-
     useEffect(() => {
-        const checkAndUpdateCounts = async () => {
+        const checkBookReturned = () => {
+            const returnedTimestamp = localStorage.getItem('bookReturned');
             const storedRequestCount = parseInt(localStorage.getItem('requestCount')) || 0;
-            if (storedRequestCount !== requestCount) {
-                setRequestCount(storedRequestCount);
-                console.log('UserHome: Request count updated from localStorage:', storedRequestCount);
-            }
+            const currentBorrowedCount = borrowedBooksCountRef.current;
 
-            // Re-fetch borrowed books count
-            try {
-                const borrowedBooksResponse = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
-                    headers: {
-                        'Authorization': `Token ${authToken}`,
-                    },
-                });
-                const currentBorrowedCount = borrowedBooksResponse.data.borrowingRecords.filter(record => !record.is_returned).length;
-                const previousBorrowedCount = borrowedBooksCountRef.current;
+            // Re-fetch borrowed books count to ensure accuracy
+            const fetchBorrowedCount = async () => {
+                try {
+                    const borrowedBooksResponse = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
+                        headers: {
+                            'Authorization': `Token ${authToken}`,
+                        },
+                    });
+                    const latestBorrowedCount = borrowedBooksResponse.data.borrowingRecords.filter(record => !record.is_returned).length;
+                    borrowedBooksCountRef.current = latestBorrowedCount;
 
-                if (previousBorrowedCount > currentBorrowedCount && storedRequestCount > 0) {
-                    const newRequestCount = storedRequestCount - 1;
-                    localStorage.setItem('requestCount', newRequestCount.toString());
-                    setRequestCount(newRequestCount);
-                    console.log('UserHome: Borrowed book returned, decreasing request count to:', newRequestCount);
-                    setMessageText('A book has been returned. You can borrow now another.');
-                    setIsMessageVisible(true);
+                    // Check if a book was returned and if the request count can be decreased
+                    if (latestBorrowedCount < currentBorrowedCount && storedRequestCount > 0) {
+                        const newRequestCount = storedRequestCount - 1;
+                        localStorage.setItem('requestCount', newRequestCount.toString());
+                        setRequestCount(newRequestCount);
+                        console.log('UserHome: Book returned detected, decreasing request count to:', newRequestCount);
+                        setMessageText('A book has been returned. You can now make another request.');
+                        setIsMessageVisible(true);
+                        // Optionally clear the flag after processing
+                        localStorage.removeItem('bookReturned');
+                    }
+                } catch (error) {
+                    console.error('UserHome: Error fetching borrowed books count for update:', error);
                 }
-                borrowedBooksCountRef.current = currentBorrowedCount;
+            };
 
-            } catch (error) {
-                console.error('UserHome: Error fetching borrowed books count for update:', error);
-            }
+            fetchBorrowedCount();
         };
 
-        if (isFirstLoad.current) {
-            isFirstLoad.current = false;
-            return;
-        }
-
-        const intervalId = setInterval(checkAndUpdateCounts, 2000); // Check every 2 seconds
+        const intervalId = setInterval(checkBookReturned, 2000); // Check every 2 seconds
 
         return () => clearInterval(intervalId);
-    }, [requestCount, authToken]);
+    }, [authToken, requestCount]); // Removed borrowedBooksCountRef from dependency array
+
 
     return (
         <div className='dashboard'>
