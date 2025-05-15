@@ -127,7 +127,7 @@ function UserHome() {
         // Get the current request count from the state
         let currentRequestCount = requestCount;
         console.log('handleSendRequest - Current requestCount state:', currentRequestCount);
-        //resetRequestCount(); // You can uncomment this line if you want to reset before each request
+        //  resetRequestCount(); // You can uncomment this line if you want to reset before each request
 
         if (borrowedBooksCount >= 3) {
             setMessageText(<span style={{ color: 'orange' }}>You can only borrow up to 3 books.</span>);
@@ -196,6 +196,21 @@ function UserHome() {
         // Optionally trigger a re-fetch if needed for other UI updates
         setRefreshUserHome(prev => !prev);
     };
+
+    useEffect(() => {
+    const handleStorageChange = (event) => {
+        if (event.key === 'bookReturned' && event.newValue === 'true') {
+            console.log('Detected return of book via storage');
+            setRefreshUserHome(prev => !prev);
+            localStorage.setItem('bookReturned', 'false'); // reset the flag
+        }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+        window.removeEventListener('storage', handleStorageChange);
+    };
+}, []);
 
     useEffect(() => {
         const checkAndUpdateCounts = async () => {
