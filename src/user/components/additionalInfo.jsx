@@ -221,13 +221,16 @@ function AdditionalInfo({ onClose, onProfileUpdated, initialProfileData }) {
                         value={userData.school_year}
                         onChange={handleChange}
                     />
-                </section>
-                <button className='submit' disabled={isSubmitting}>
+                </section >
+                <section style={{display: "flex", flexDirection: "row"}}>
+                        <button className='submit' disabled={isSubmitting}>
                     {isSubmitting ? 'Submitting...' : 'Submit'}
                 </button>
                 <button type="button" className="cancel-button" onClick={onClose}>
                     Cancel
                 </button>
+                </section>
+                
             </form>
         </div>
     );
