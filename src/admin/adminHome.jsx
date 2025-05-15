@@ -43,22 +43,28 @@ function AdminHome() {
     };
 
     const fetchTotalBorrowedBooks = async () => {
-        const token = localStorage.getItem('authToken');
-        try {
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
-                headers: {
-                    'Authorization': `Token ${token}`,
-                },
-            });
-            // Filter the borrowing records to count only those that are NOT returned
-            const currentlyBorrowed = response.data.borrowingRecords.filter(record => !record.is_returned).length;
-            setTotalBorrowedBooks(currentlyBorrowed);
-            setAllBorrowingRecords(response.data.borrowingRecords);
-            console.log("Borrow Records Response:", response.data);
-        } catch (error) {
-            console.error('Error fetching borrowing records:', error);
-        }
-    };
+    const token = localStorage.getItem('authToken');
+    try {
+        const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
+            headers: {
+                'Authorization': `Token ${token}`,
+            },
+        });
+
+        const data = response.data;
+        console.log("Borrow Records Response:", data);
+
+        // Use correct structure based on actual response
+        const records = Array.isArray(data) ? data : data.borrowingRecords || [];
+
+        const currentlyBorrowed = records.filter(record => !record.is_returned).length;
+        setTotalBorrowedBooks(currentlyBorrowed);
+        setAllBorrowingRecords(records);
+    } catch (error) {
+        console.error('Error fetching borrowing records:', error);
+    }
+};
+
 
     const fetchBorrowRequests = async () => {
         try {
