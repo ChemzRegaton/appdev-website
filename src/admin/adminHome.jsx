@@ -35,9 +35,6 @@ function AdminHome() {
         try {
             const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/books/');
             setTotalBooks(response.data.total_books);
-            console.log("Books Response:", response.data);
-
-
         } catch (error) {
             console.error('Error fetching total books:', error);
             setError('Failed to fetch total books.');
@@ -54,13 +51,10 @@ function AdminHome() {
             });
             setTotalBorrowedBooks(response.data.totalBorrowedRecords);
             setAllBorrowingRecords(response.data.borrowingRecords);
-            console.log("Borrow Records Response:", response.data);
         } catch (error) {
             console.error('Error fetching borrowing records:', error);
         }
     };
-
-    
 
     const fetchBorrowRequests = async () => {
         try {
