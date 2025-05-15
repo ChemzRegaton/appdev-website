@@ -40,69 +40,71 @@ function AdminBorrowBook({ onBookReturned }) {
         fetchAcceptedBorrowingRecords();
     }, []);
 
-    const handleReturnBook = async (recordId, bookId, borrowerUsername) => {
-        try {
-            const response = await axios.patch(
-                `https://appdev-integrative-28.onrender.com/api/library/borrowing-records/${recordId}/return/`,
-                {},
-                {
-                    headers: {
-                        'Authorization': `Token ${authToken}`,
-                    },
-                }
-            );
-            console.log(`Borrowing record with ID ${recordId} marked as returned:`, response.data);
-            setBorrowingRecords(borrowingRecords.filter(record => record.id !== recordId));
-            setBorrowedBooksCount(borrowedBooksCount - 1);
-            setMessageText(response.data.message);
-            setIsMessageVisible(true);
-
-            localStorage.setItem('bookReturned', new Date().toISOString());
-
-            if (onBookReturned) {
-    onBookReturned();
-}
-
-// Decrease requestCount in localStorage
-const storedRequestCount = parseInt(localStorage.getItem('requestCount')) || 0;
-if (storedRequestCount > 0) {
-    const updatedRequestCount = storedRequestCount - 1;
-    localStorage.setItem('requestCount', updatedRequestCount.toString());
-}
-
-// Mark book returned in localStorage
-localStorage.setItem('bookReturned', new Date().toISOString());
-
-
-    const handleSearchChange = (event) => {
-        setSearchQuery(event.target.value.toLowerCase());
-    };
-
-    const handleCloseMessage = () => {
-        setIsMessageVisible(false);
-        setMessageText('');
-    };
-
-    const filteredBorrowingRecords = borrowingRecords.filter(record => {
-        return (
-            record.book_title.toLowerCase().includes(searchQuery) ||
-            record.user.toLowerCase().includes(searchQuery)
+// ...inside the component
+const handleReturnBook = async (recordId, bookId, borrowerUsername) => {
+    try {
+        const response = await axios.patch(
+            `https://appdev-integrative-28.onrender.com/api/library/borrowing-records/${recordId}/return/`,
+            {},
+            {
+                headers: {
+                    'Authorization': `Token ${authToken}`,
+                },
+            }
         );
-    });
+        console.log(`Borrowing record with ID ${recordId} marked as returned:`, response.data);
+        setBorrowingRecords(borrowingRecords.filter(record => record.id !== recordId));
+        setBorrowedBooksCount(borrowedBooksCount - 1);
+        setMessageText(response.data.message);
+        setIsMessageVisible(true);
 
-    const calculateDueDateInfo = (borrowDate, returnDate) => {
-        const today = new Date();
-        const due = new Date(returnDate);
-        const timeDifference = due.getTime() - today.getTime();
-        const daysLeft = Math.ceil(timeDifference / (1000 * 3600 * 24));
+        localStorage.setItem('bookReturned', new Date().toISOString());
 
-        if (daysLeft >= 0) {
-            return { text: `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`, overdue: false };
-        } else {
-            const daysPassed = Math.abs(daysLeft);
-            return { text: `${daysPassed} day${daysPassed !== 1 ? 's' : ''} overdue`, overdue: true };
+        if (onBookReturned) {
+            onBookReturned();
         }
-    };
+
+        const storedRequestCount = parseInt(localStorage.getItem('requestCount')) || 0;
+        if (storedRequestCount > 0) {
+            const updatedRequestCount = storedRequestCount - 1;
+            localStorage.setItem('requestCount', updatedRequestCount.toString());
+        }
+
+    } catch (error) {
+        console.error('Error marking book as returned:', error);
+    }
+}; // ✅ This closes handleReturnBook properly
+
+// ✅ These should be OUTSIDE the above function:
+const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value.toLowerCase());
+};
+
+const handleCloseMessage = () => {
+    setIsMessageVisible(false);
+    setMessageText('');
+};
+
+const filteredBorrowingRecords = borrowingRecords.filter(record => {
+    return (
+        record.book_title.toLowerCase().includes(searchQuery) ||
+        record.user.toLowerCase().includes(searchQuery)
+    );
+});
+
+const calculateDueDateInfo = (borrowDate, returnDate) => {
+    const today = new Date();
+    const due = new Date(returnDate);
+    const timeDifference = due.getTime() - today.getTime();
+    const daysLeft = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+    if (daysLeft >= 0) {
+        return { text: `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`, overdue: false };
+    } else {
+        const daysPassed = Math.abs(daysLeft);
+        return { text: `${daysPassed} day${daysPassed !== 1 ? 's' : ''} overdue`, overdue: true };
+    }
+};
 
     return (
         <div className='dashboard'>

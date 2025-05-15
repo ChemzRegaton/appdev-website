@@ -45,7 +45,7 @@ function AdminHome() {
 const fetchTotalBorrowedBooks = async () => {
     const token = localStorage.getItem('authToken');
     try {
-        const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/?limit=100', {
+        const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
             headers: {
                 'Authorization': `Token ${token}`,
             },
@@ -59,6 +59,7 @@ const fetchTotalBorrowedBooks = async () => {
         setTotalBorrowedBooks(currentlyBorrowed);
         setReturnedBooksCount(returnedCount);
         setAllBorrowingRecords(records);
+        console.log("Response received:", response.data);
     } catch (error) {
         console.error('Error fetching borrowing records:', error);
     }
