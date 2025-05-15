@@ -13,7 +13,7 @@ function AdminNotification() {
     <div className='dashboard' style={{ display: 'block' }}>
       <Sidebar />
       <section className='policy'>
-        <section className='policy-terms-container'>
+        <section className='policy-terms-container' style={{ display: 'block' }}>
 
           <p><strong>Borrowing Policy</strong></p>
           <ul>
