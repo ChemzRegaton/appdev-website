@@ -1,6 +1,6 @@
   import React from 'react';
   import { useNavigate, useLocation } from 'react-router-dom';
-  import './sidebar.css';
+  import './sideBar.css';
   import logoImage from '../assets/LOGO_WORD2.png'; 
 
   const Sidebar = () => {
