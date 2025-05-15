@@ -60,13 +60,19 @@ function AdminBorrowBook({ onBookReturned }) {
             localStorage.setItem('bookReturned', new Date().toISOString());
 
             if (onBookReturned) {
-                onBookReturned();
-            }
-        } catch (error) {
-            console.error(`Error marking borrowing record ${recordId} as returned:`, error);
-            setError('Failed to update return status.');
-        }
-    };
+    onBookReturned();
+}
+
+// Decrease requestCount in localStorage
+const storedRequestCount = parseInt(localStorage.getItem('requestCount')) || 0;
+if (storedRequestCount > 0) {
+    const updatedRequestCount = storedRequestCount - 1;
+    localStorage.setItem('requestCount', updatedRequestCount.toString());
+}
+
+// Mark book returned in localStorage
+localStorage.setItem('bookReturned', new Date().toISOString());
+
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value.toLowerCase());
