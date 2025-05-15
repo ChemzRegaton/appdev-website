@@ -33,7 +33,7 @@ function AdminHome() {
 
     const fetchTotalBooks = async () => {
         try {
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/books/');
+            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/books/');
             setTotalBooks(response.data.total_books);
         } catch (error) {
             console.error('Error fetching total books:', error);
@@ -44,7 +44,7 @@ function AdminHome() {
     const fetchTotalBorrowedBooks = async () => {
         const token = localStorage.getItem('authToken');
         try {
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
+            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/borrowing-records/', {
                 headers: {
                     'Authorization': `Token ${token}`,
                 },
@@ -58,7 +58,7 @@ function AdminHome() {
 
     const fetchBorrowRequests = async () => {
         try {
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/admin/requests/pending/', {
+            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/admin/requests/pending/', {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },
@@ -90,7 +90,7 @@ function AdminHome() {
     const handleAcceptRequest = async (requestId) => {
         try {
             const response = await axios.patch(
-                `https://appdev-integrative-28.onrender.com/api/library/requests/${requestId}/accept/`,
+                `https://library-management-system-3qap.onrender.com/api/library/requests/${requestId}/accept/`,
                 {},
                 {
                     headers: {

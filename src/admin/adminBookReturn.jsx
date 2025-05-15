@@ -34,7 +34,7 @@ function AdminBorrowRequest() {
     const handleAcceptRequest = async (requestId) => {
         try {
             const response = await axios.patch(
-                `https://appdev-integrative-28.onrender.com/api/library/requests/${requestId}/accept/`,
+                `https://library-management-system-3qap.onrender.com/api/library/requests/${requestId}/accept/`,
                 {},
                 {
                     headers: {
@@ -63,7 +63,7 @@ function AdminBorrowRequest() {
     const handleRejectRequest = async (requestId) => {
         try {
             const response = await axios.patch(
-                `https://appdev-integrative-28.onrender.com/api/library/borrow_requests/${requestId}/reject/`, // Verify your reject endpoint
+                `https://library-management-system-3qap.onrender.com/api/library/borrow_requests/${requestId}/reject/`, // Verify your reject endpoint
                 {},
                 {
                     headers: {

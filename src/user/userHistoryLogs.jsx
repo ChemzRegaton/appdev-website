@@ -65,7 +65,7 @@ function FAQ() {
 
         try {
             const response = await axios.post(
-                'https://appdev-integrative-28.onrender.com/api/auth/messages/send/', // Use your API endpoint
+                'https://library-management-system-3qap.onrender.com/api/auth/messages/send/', // Use your API endpoint
                 {
                     subject: contactSubject,
                     message: contactMessage,

@@ -34,7 +34,7 @@ function Message({ onClose, onProfileUpdated, message }) { // Add onProfileUpdat
                 console.error('Authentication token not found.');
                 return;
             }
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/auth/profile/', {
+            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/auth/profile/', {
                 headers: {
                     'Authorization': `Token ${token}`,
                 },
@@ -77,7 +77,7 @@ function Message({ onClose, onProfileUpdated, message }) { // Add onProfileUpdat
             };
 
             const response = await axios.put(
-                'https://appdev-integrative-28.onrender.com/api/auth/profile/', // Your new API endpoint
+                'https://library-management-system-3qap.onrender.com/api/auth/profile/', // Your new API endpoint
                 profilePayload,
                 {
                     headers: {

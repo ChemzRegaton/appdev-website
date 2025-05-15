@@ -18,7 +18,7 @@ function UserNotification() {
             return;
         }
         try {
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/notifications/', {
+            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/notifications/', {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },
@@ -41,7 +41,7 @@ function UserNotification() {
             return;
         }
         try {
-            await axios.delete(`https://appdev-integrative-28.onrender.com/api/library/notifications/${notificationId}/`, {
+            await axios.delete(`https://library-management-system-3qap.onrender.com/api/library/notifications/${notificationId}/`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },

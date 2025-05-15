@@ -25,7 +25,7 @@ function AdminBookManage() {
 
     const fetchBooks = async () => {
         try {
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/books/');
+            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/books/');
             setBooks(response.data.books);
             const totalQuantity = response.data.books.reduce((sum, book) => sum + book.quantity, 0);
             setTotalBookQuantity(totalQuantity);
@@ -38,7 +38,7 @@ function AdminBookManage() {
     const handleDeleteBook = async (bookId) => {
         if (window.confirm(`Are you sure you want to delete book with ID: ${bookId}?`)) {
             try {
-                await axios.delete(`https://appdev-integrative-28.onrender.com/api/library/books/${bookId}/`);
+                await axios.delete(`https://library-management-system-3qap.onrender.com/api/library/books/${bookId}/`);
                 console.log(`Book with ID ${bookId} deleted successfully.`);
                 fetchBooks();
             } catch (error) {
@@ -87,7 +87,7 @@ function AdminBookManage() {
 
         try {
             const response = await axios.post(
-                `https://appdev-integrative-28.onrender.com/api/library/books/${bookId}/borrow/`,
+                `https://library-management-system-3qap.onrender.com/api/library/books/${bookId}/borrow/`,
                 {}, // You might not need a body for a simple borrow action
                 {
                     headers: {

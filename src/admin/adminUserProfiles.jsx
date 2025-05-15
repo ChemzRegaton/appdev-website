@@ -47,7 +47,7 @@ function AdminUserProfiles() {
                 setError('Authentication token not found.');
                 return;
             }
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/auth/users/', {
+            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/auth/users/', {
                 headers: {
                     'Authorization': `Token ${localStorage.getItem('authToken')}`,
                 },
@@ -86,7 +86,7 @@ function AdminUserProfiles() {
 
         try {
             const response = await axios.post(
-                `https://appdev-integrative-28.onrender.com/api/library/notifications/send-return/${userId}/`,
+                `https://library-management-system-3qap.onrender.com/api/library/notifications/send-return/${userId}/`,
                 {},
                 {
                     headers: {
