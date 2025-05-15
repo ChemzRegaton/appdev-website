@@ -3,34 +3,33 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import logoImage from '../assets/LOGO_WORD.png';
 import { useNavigate } from 'react-router-dom';
-import './adminBorrowBook.css'; // Corrected import path
+import './adminBorrowBook.css';
 import Sidebar from './sideBar.jsx';
-import Message from './components/message.jsx'; // Adjust path as needed
+import Message from './components/message.jsx';
 import AddBookPanel from './components/addBookPanel.jsx';
 import EditBookPanel from './components/editBookPanel.jsx';
-import { FaCheckCircle } from 'react-icons/fa'; // Import the check circle icon
+import { FaCheckCircle } from 'react-icons/fa';
 
-function AdminBorrowBook({ onBookReturned }) { // Receive the refresh function as a prop
+function AdminBorrowBook({ onBookReturned }) {
     const [error, setError] = useState('');
     const [borrowingRecords, setBorrowingRecords] = useState([]);
-    const [borrowedBooksCount, setBorrowedBooksCount] = useState(0); // New state for borrowed book count
+    const [borrowedBooksCount, setBorrowedBooksCount] = useState(0);
     const navigate = useNavigate();
     const authToken = localStorage.getItem('authToken');
     const [searchQuery, setSearchQuery] = useState('');
     const [messageText, setMessageText] = useState('');
     const [isMessageVisible, setIsMessageVisible] = useState(false);
 
-
     const fetchAcceptedBorrowingRecords = async () => {
         try {
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', { // Fetch all borrowing records
+            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },
             });
             const activeBorrows = response.data.borrowingRecords.filter(record => !record.is_returned);
             setBorrowingRecords(activeBorrows);
-            setBorrowedBooksCount(activeBorrows.length); // Set the count of currently borrowed books
+            setBorrowedBooksCount(activeBorrows.length);
         } catch (error) {
             console.error('Error fetching borrowing records:', error);
             setError('Failed to fetch borrowing records.');
@@ -53,23 +52,22 @@ function AdminBorrowBook({ onBookReturned }) { // Receive the refresh function a
                 }
             );
             console.log(`Borrowing record with ID ${recordId} marked as returned:`, response.data);
-            // Remove the returned record from the local state
             setBorrowingRecords(borrowingRecords.filter(record => record.id !== recordId));
             setBorrowedBooksCount(borrowedBooksCount - 1);
             setMessageText(response.data.message);
             setIsMessageVisible(true);
 
-            localStorage.setItem('bookReturned', new Date().toISOString()); // Update localStorage with a timestamp
+            localStorage.setItem('bookReturned', new Date().toISOString());
 
             if (onBookReturned) {
-                onBookReturned(); // Call the function passed from UserHome
+                onBookReturned();
             }
         } catch (error) {
             console.error(`Error marking borrowing record ${recordId} as returned:`, error);
             setError('Failed to update return status.');
-
         }
     };
+
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value.toLowerCase());
     };
@@ -79,18 +77,16 @@ function AdminBorrowBook({ onBookReturned }) { // Receive the refresh function a
         setMessageText('');
     };
 
-
     const filteredBorrowingRecords = borrowingRecords.filter(record => {
-        const searchMatch =
+        return (
             record.book_title.toLowerCase().includes(searchQuery) ||
-            record.user.toLowerCase().includes(searchQuery); // Assuming 'user' is the username
-
-        return searchMatch;
+            record.user.toLowerCase().includes(searchQuery)
+        );
     });
 
     const calculateDueDateInfo = (borrowDate, returnDate) => {
         const today = new Date();
-        const due = new Date(returnDate); // Assuming returnDate is the due date
+        const due = new Date(returnDate);
         const timeDifference = due.getTime() - today.getTime();
         const daysLeft = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
@@ -126,21 +122,21 @@ function AdminBorrowBook({ onBookReturned }) { // Receive the refresh function a
                                 <th>Borrower</th>
                                 <th>Title</th>
                                 <th>Borrow Date</th>
-                                <th>Due Date</th> {/* Renamed to Due Date */}
+                                <th>Due Date</th>
                                 <th>Due Date Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredBorrowingRecords.map(record => {
-                                const dueDateInfo = calculateDueDateInfo(record.borrow_date, record.return_date); // Using return_date as due date
+                                const dueDateInfo = calculateDueDateInfo(record.borrow_date, record.return_date);
                                 return (
                                     <tr key={record.id} className={dueDateInfo.overdue ? 'overdue-row' : ''}>
                                         <td>{record.id}</td>
                                         <td>{record.user}</td>
                                         <td>{record.book_title}</td>
                                         <td>{new Date(record.borrow_date).toLocaleDateString()}</td>
-                                        <td>{new Date(record.return_date).toLocaleDateString()}</td> {/* Displaying return_date as due date */}
+                                        <td>{new Date(record.return_date).toLocaleDateString()}</td>
                                         <td>
                                             {!record.is_returned && (
                                                 <span className={dueDateInfo.overdue ? 'overdue-text' : 'due-date-text'}>
@@ -170,7 +166,6 @@ function AdminBorrowBook({ onBookReturned }) { // Receive the refresh function a
                 {isMessageVisible && (
                     <Message message={messageText} onClose={handleCloseMessage} />
                 )}
-
             </section>
         </div>
     );

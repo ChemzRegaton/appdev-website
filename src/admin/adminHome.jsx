@@ -36,8 +36,6 @@ function AdminHome() {
             const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/books/');
             setTotalBooks(response.data.total_books);
             console.log("Books Response:", response.data);
-
-
         } catch (error) {
             console.error('Error fetching total books:', error);
             setError('Failed to fetch total books.');
@@ -52,7 +50,9 @@ function AdminHome() {
                     'Authorization': `Token ${token}`,
                 },
             });
-            setTotalBorrowedBooks(response.data.totalBorrowedRecords);
+            // Filter the borrowing records to count only those that are NOT returned
+            const currentlyBorrowed = response.data.borrowingRecords.filter(record => !record.is_returned).length;
+            setTotalBorrowedBooks(currentlyBorrowed);
             setAllBorrowingRecords(response.data.borrowingRecords);
             console.log("Borrow Records Response:", response.data);
         } catch (error) {
@@ -103,8 +103,10 @@ function AdminHome() {
                 }
             );
             console.log(`Request ${requestId} accepted successfully:`, response.data);
-
-            // No longer removing the request from local state here
+            // After accepting a request, re-fetch the borrow requests to update the list
+            fetchBorrowRequests();
+            // It might also be a good idea to re-fetch the borrowed books count
+            fetchTotalBorrowedBooks();
         } catch (error) {
             console.error(`Error accepting request:`, error);
             setError('Failed to accept request.');
@@ -123,10 +125,9 @@ function AdminHome() {
     const UserProfileImage = ({ profilePicture }) => {
         const getValidImageSource = () => {
             if (profilePicture) {
-                return  profilePicture.startsWith('http') ||  profilePicture.startsWith('data:image') ? profilePicture : `${window.location.origin}${profilePicture}`;
+                return profilePicture.startsWith('http') || profilePicture.startsWith('data:image') ? profilePicture : `${window.location.origin}${profilePicture}`;
             }
             return defaultProfileImage;
-
         };
 
         const src = getValidImageSource();
@@ -151,7 +152,6 @@ function AdminHome() {
                         objectFit: 'cover',
                     }}
                 />
-
             </div>
         );
     };
@@ -200,7 +200,6 @@ function AdminHome() {
                         <section key={request.id} className='userNotify' style={{ alignItems: 'center', maxWidth: '200vh' }}>
                             <UserProfileImage
                                 profilePicture={request.requester_profile?.profile_picture}
-
                             />
                             <section
                                 className='userNotifyDetails'
@@ -228,7 +227,6 @@ function AdminHome() {
                     ))}
                     {borrowRequests.length === 0 && <p>No new borrow requests.</p>}
                 </section>
-
             </section>
         </div>
     );
