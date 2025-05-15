@@ -232,7 +232,7 @@ function UserHome() {
 
     return (
         <div className='dashboard'>
-            <Sidebar onResetRequestCount={resetRequestCount} requestCount={requestCount} /> {/* Pass requestCount to Sidebar */}
+            <Sidebar onResetRequestCount={resetRequestCount} /> {/* Pass the reset function to Sidebar */}
             {isAddBookPanelVisible && (
                 <AddBookPanel onClose={handleCloseAddBookPanel} />
             )}
@@ -263,13 +263,13 @@ function UserHome() {
                         <button
                             className='book-request-button'
                             onClick={() => handleSendRequest(book.book_id, book.available_quantity)}
-                            disabled={book.available_quantity <= 0 || requestCount >= 3} // Disable if unavailable or request limit reached
+                            disabled={book.available_quantity <= 0}
                             style={{
-                                opacity: book.available_quantity <= 0 || requestCount >= 3 ? 0.6 : 1,
-                                cursor: book.available_quantity <= 0 || requestCount >= 3 ? 'not-allowed' : 'pointer'
+                                opacity: book.available_quantity <= 0 ? 0.6 : 1,
+                                cursor: book.available_quantity <= 0 ? 'not-allowed' : 'pointer'
                             }}
                         >
-                            {book.available_quantity <= 0 ? 'Unavailable' : requestCount >= 3 ? 'Request Limit Reached' : 'Send Request'}
+                            {book.available_quantity <= 0 ? 'Unavailable' : 'Send Request'}
                         </button>
                     </section>
                 ))}
