@@ -137,7 +137,7 @@ function AdditionalInfo({ onClose, onProfileUpdated, initialProfileData }) {
                 />
 
                 {/* Role (Editable) */}
-                <p style={{color: 'white', margin: '-4px', height: "3vh"}}>Role:</p>
+                <p style={{color: 'white', margin: '-4px'}}>Role:</p>
                     <select id="role" name="role" value={userData.role} onChange={handleChange}>
                         <option value="Student">Student</option>
                         <option value="Faculty/Staff">Faculty/Staff</option>
