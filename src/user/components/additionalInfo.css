@@ -120,6 +120,10 @@
     align-items: center;
   }
 
+  .bookInput input select {
+    height: 5vh;
+  }
+
   .addInputs {
     background-color: #031C3E;;
     width: 80%;
