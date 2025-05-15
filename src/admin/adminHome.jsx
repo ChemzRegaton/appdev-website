@@ -42,7 +42,7 @@ function AdminHome() {
         }
     };
 
-    const fetchTotalBorrowedBooks = async () => {
+const fetchTotalBorrowedBooks = async () => {
     const token = localStorage.getItem('authToken');
     try {
         const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
