@@ -1,17 +1,17 @@
 
 
 .dashboard {
-  width: 100%;
-  min-height: 100vh;
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-left: 250px;
-  padding: 20px;
-  color: black;
+    width: 100%;
+    height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-left: 250px;
+    color: black;
+    padding: 20px;
 }
-
 
 .booksTable td:hover {
     background-color: #f1c16f;
@@ -105,37 +105,44 @@ button {
 /* ... other styles ... */
 
 .booksTable {
-  padding: 20px;
-  overflow-y: auto;
-  width: 95%;
-  height: 70vh;
-  box-shadow: 2px 4px 6px rgba(0, 0, 0, 1);
-  border-radius: 10px;
-  gap: 40px;
-  text-align: left;
-  display: block;
-  background-color: #031C3E;
+    padding: 20px;
+    overflow-y: auto;
+    width: 95%;
+    height: 70vh;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 1);
+    border-radius: 10px;
+    gap: 40px;
+    text-align: left;
+    display: block;
 }
 
 .booksTable table {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    border-bottom: #000000;
 }
 
-.booksTable th,
 .booksTable td {
-  padding: 8px 10px;
-  font-size: 0.8em;
-  color: white;
-  border-bottom: 1px solid #444;
-  word-break: break-word;
+    border-bottom: #000000;
+    text-align: left;
+    font-size: 0.8em;
+    overflow-wrap: break-word; /* Allow wrapping */
+    word-break: break-word; /* For older browsers */
+    padding: 8px 10px; /* Added padding to td */
 }
 
 .booksTable th {
-  position: sticky;
-  top: 0;
-  background-color: #031C3E;
-  z-index: 2;
+    text-align: left;
+    font-size: 0.8em;
+    overflow-wrap: break-word; /* Allow wrapping */
+    word-break: break-word; /* For older browsers */
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick to the top of its containing block */
+    z-index: 1; /* Ensure the header stays on top of the content */
+     /* Added padding to th */
+    background-color: #031C3E;
+    height: 20px;
 }
 
 /* Column widths - Adjusted to include the Cover column */
@@ -238,20 +245,4 @@ button {
     background-color: #f1c16f; /* Light blue or any color you prefer */
     cursor: pointer; /* Optional: Change cursor to indicate interactivity */
     border-bottom: #000000;
-}
-
-.booksTable tbody tr:nth-child(even) {
-  background-color: #0a2a56;
-}
-
-/* Hover highlight */
-.booksTable tbody tr:hover {
-  background-color: #8c5902;
-  cursor: default;
-}
-
-/* Error message */
-.error {
-  color: red;
-  margin-top: 10px;
 }
