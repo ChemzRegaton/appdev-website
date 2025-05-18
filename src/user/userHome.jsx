@@ -127,7 +127,7 @@ function UserHome() {
         // Get the current request count from the state
         let currentRequestCount = requestCount;
         console.log('handleSendRequest - Current requestCount state:', currentRequestCount);
-        //resetRequestCount(); // You can uncomment this line if you want to reset before each request
+        resetRequestCount(); // You can uncomment this line if you want to reset before each request
 
         if (borrowedBooksCount >= 3) {
             setMessageText(<span style={{ color: 'orange' }}>You can only borrow up to 3 books.</span>);
