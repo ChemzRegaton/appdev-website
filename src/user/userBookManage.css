@@ -13,6 +13,10 @@
     padding: 20px;
 }
 
+.booksTable td:hover {
+    background-color: #f1c16f;
+}
+
 section {
     width: 50%;
     height: 90vh;
