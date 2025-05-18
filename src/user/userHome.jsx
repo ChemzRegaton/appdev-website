@@ -36,7 +36,7 @@ function UserHome() {
         setLoading(true);
         setError('');
         try {
-            const profileResponse = await axios.get('https://library-management-system-3qap.onrender.com/api/auth/profile/', {
+            const profileResponse = await axios.get('https://appdev-integrative-28.onrender.com/api/auth/profile/', {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },
@@ -45,7 +45,7 @@ function UserHome() {
             const isInfoFilled = profileResponse.data.fullname && profileResponse.data.role && profileResponse.data.course && profileResponse.data.birthdate && profileResponse.data.address;
             setAddBookPanelVisible(!isInfoFilled);
 
-            const booksResponse = await axios.get('https://library-management-system-3qap.onrender.com/api/library/books/', {
+            const booksResponse = await axios.get('https://appdev-integrative-28.onrender.com/api/library/books/', {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },
@@ -55,7 +55,7 @@ function UserHome() {
             setFilteredBooks(booksResponse.data.books);
 
             // Fetch borrowed books count
-            const borrowedBooksResponse = await axios.get('https://library-management-system-3qap.onrender.com/api/library/borrowing-records/', {
+            const borrowedBooksResponse = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },
@@ -127,7 +127,6 @@ function UserHome() {
         // Get the current request count from the state
         let currentRequestCount = requestCount;
         console.log('handleSendRequest - Current requestCount state:', currentRequestCount);
-        //resetRequestCount(); // You can uncomment this line if you want to reset before each request
 
         if (borrowedBooksCount >= 3) {
             setMessageText(<span style={{ color: 'orange' }}>You can only borrow up to 3 books.</span>);
@@ -149,7 +148,7 @@ function UserHome() {
 
         try {
             const response = await axios.post(
-                'https://library-management-system-3qap.onrender.com/api/library/requests/',
+                'https://appdev-integrative-28.onrender.com/api/library/requests/',
                 { book: bookId },
                 {
                     headers: {
@@ -170,6 +169,9 @@ function UserHome() {
 
             setMessageText(`Your request for "${response.data.book_detail.title}" was sent.`);
             setIsMessageVisible(true);
+
+            // Check if any borrowed books have been returned and update request count accordingly
+            handleBookReturnedFromAdmin(); // Trigger the update from Admin (check borrowed count)
         } catch (error) {
             console.error('handleSendRequest - Error sending borrow request:', error);
             setMessageText('Failed to send request.');
@@ -177,40 +179,18 @@ function UserHome() {
         }
     };
 
-    const handleBookReturnedFromAdmin = () => {
+        const handleBookReturnedFromAdmin = () => {
         console.log('handleBookReturnedFromAdmin called');
         const storedRequestCount = parseInt(localStorage.getItem('requestCount')) || 0;
         console.log('handleBookReturnedFromAdmin - Stored requestCount from localStorage:', storedRequestCount);
 
-        if (storedRequestCount > 0) {
-            const newRequestCount = storedRequestCount - 1;
-            localStorage.setItem('requestCount', newRequestCount.toString());
-            setRequestCount(newRequestCount);
-            console.log('handleBookReturnedFromAdmin - requestCount updated to:', newRequestCount);
-            setMessageText('A book has been returned. You can now make another request.');
-            setIsMessageVisible(true);
-        } else {
-            console.log('handleBookReturnedFromAdmin - No active requests to decrease.');
-        }
+        // Update the request count from localStorage and trigger a re-fetch
+        setRequestCount(storedRequestCount);
+        console.log('handleBookReturnedFromAdmin - requestCount state set to:', storedRequestCount);
 
-        // Optionally trigger a re-fetch if needed for other UI updates
-        setRefreshUserHome(prev => !prev);
-    };
+        setRefreshUserHome(prev => !prev); // Trigger re-fetch if necessary
+        };
 
-    useEffect(() => {
-    const handleStorageChange = (event) => {
-        if (event.key === 'bookReturned' && event.newValue === 'true') {
-            console.log('Detected return of book via storage');
-            setRefreshUserHome(prev => !prev);
-            localStorage.setItem('bookReturned', 'false'); // reset the flag
-        }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-        window.removeEventListener('storage', handleStorageChange);
-    };
-}, []);
 
     useEffect(() => {
         const checkAndUpdateCounts = async () => {
@@ -220,26 +200,23 @@ function UserHome() {
                 console.log('UserHome: Request count updated from localStorage:', storedRequestCount);
             }
 
-            // Re-fetch borrowed books count to check for returns
+            // Re-fetch borrowed books count
             try {
-                const borrowedBooksResponse = await axios.get('https://library-management-system-3qap.onrender.com/api/library/borrowing-records/', {
+                const borrowedBooksResponse = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', {
                     headers: {
                         'Authorization': `Token ${authToken}`,
                     },
                 });
                 const currentBorrowedCount = borrowedBooksResponse.data.borrowingRecords.filter(record => !record.is_returned).length;
+                const previousBorrowedCount = borrowedBooksCountRef.current;
 
-                // If the number of borrowed books has decreased, it implies a return happened
-                if (currentBorrowedCount < borrowedBooksCountRef.current) {
-                    const currentRequestCount = parseInt(localStorage.getItem('requestCount')) || 0;
-                    if (currentRequestCount > 0) {
-                        const newRequestCount = currentRequestCount - 1;
-                        localStorage.setItem('requestCount', newRequestCount.toString());
-                        setRequestCount(newRequestCount);
-                        console.log('UserHome: Book returned, decreasing request count to:', newRequestCount);
-                        setMessageText('A book has been returned. You can now make another request.');
-                        setIsMessageVisible(true);
-                    }
+                if (previousBorrowedCount > currentBorrowedCount && storedRequestCount > 0) {
+                    const newRequestCount = storedRequestCount - 1;
+                    localStorage.setItem('requestCount', newRequestCount.toString());
+                    setRequestCount(newRequestCount);
+                    console.log('UserHome: Borrowed book returned, decreasing request count to:', newRequestCount);
+                    setMessageText('A book has been returned. You can borrow now another.');
+                    setIsMessageVisible(true);
                 }
                 borrowedBooksCountRef.current = currentBorrowedCount;
 

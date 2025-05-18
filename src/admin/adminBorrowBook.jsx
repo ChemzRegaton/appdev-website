@@ -23,7 +23,7 @@ function AdminBorrowBook({ onBookReturned }) { // Receive the refresh function a
 
     const fetchAcceptedBorrowingRecords = async () => {
         try {
-            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/borrowing-records/', { // Fetch all borrowing records
+            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/borrowing-records/', { // Fetch all borrowing records
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },
@@ -44,7 +44,7 @@ function AdminBorrowBook({ onBookReturned }) { // Receive the refresh function a
     const handleReturnBook = async (recordId, bookId, borrowerUsername) => {
         try {
             const response = await axios.patch(
-                `https://library-management-system-3qap.onrender.com/api/library/borrowing-records/${recordId}/return/`,
+                `https://appdev-integrative-28.onrender.com/api/library/borrowing-records/${recordId}/return/`,
                 {},
                 {
                     headers: {
@@ -53,19 +53,26 @@ function AdminBorrowBook({ onBookReturned }) { // Receive the refresh function a
                 }
             );
             console.log(`Borrowing record with ID ${recordId} marked as returned:`, response.data);
+
             // Remove the returned record from the local state
             setBorrowingRecords(borrowingRecords.filter(record => record.id !== recordId));
             setBorrowedBooksCount(borrowedBooksCount - 1);
             setMessageText(response.data.message);
             setIsMessageVisible(true);
 
+            // Decrease the request count for the user in localStorage
+            const currentRequestCount = parseInt(localStorage.getItem('requestCount')) || 0;
+            const newRequestCount = currentRequestCount > 0 ? currentRequestCount - 1 : 0;
+            localStorage.setItem('requestCount', newRequestCount.toString());
+
+            // Optionally, trigger the onBookReturned function to refresh UserHome
             if (onBookReturned) {
-                onBookReturned(); // Call the function passed from UserHome
+                onBookReturned();
             }
         } catch (error) {
-            console.error(`Error marking borrowing record ${recordId} as returned:`, error);
-            setError('Failed to update return status.');
-
+            console.error('Error returning book:', error);
+            setMessageText('Failed to return book.');
+            setIsMessageVisible(true);
         }
     };
     const handleSearchChange = (event) => {
