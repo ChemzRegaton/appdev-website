@@ -16,8 +16,9 @@ function UserReturnedList() {
           'https://library-management-system-3qap.onrender.com/api/library/my-borrowing-records/',
           { headers: { Authorization: `Token ${authToken}` } }
         );
-        // keep only returned
-        setReturnedRecords(data.borrowingRecords.filter(r => r.is_returned));
+        // The endpoint returns an array directly, not wrapped
+        const records = Array.isArray(data) ? data : (data.borrowingRecords || []);
+        setReturnedRecords(records.filter(r => r.is_returned));
       } catch (err) {
         console.error(err);
         setError('Could not load your returned books.');
