@@ -53,7 +53,7 @@ function AdminNotification() {
 
         try {
             await axios.post(
-                `https://library-management-system-3qap.onrender.com/api/auth/admin/messages/${messageId}/reply/`,
+                `https://library-management-system-3qap.onrender.com/api/library/admin/messages/${messageId}/reply/`,
                 { reply: replyText },
                 { headers: { 'Authorization': `Token ${authToken}` } }
             );
