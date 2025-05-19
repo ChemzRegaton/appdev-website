@@ -1,75 +1,184 @@
-// src/components/AdminBorrowBook.jsx
+// In AdminBorrowBook.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './adminBorrowBook.css';
+import logoImage from '../assets/LOGO_WORD.png';
+import { useNavigate } from 'react-router-dom';
+import './adminBorrowBook.css'; // Corrected import path
 import Sidebar from './sideBar.jsx';
-import Message from './components/message.jsx';
-import { FaCheckCircle } from 'react-icons/fa';
+import Message from './components/message.jsx'; // Adjust path as needed
+import AddBookPanel from './components/addBookPanel.jsx';
+import EditBookPanel from './components/editBookPanel.jsx';
+import { FaCheckCircle } from 'react-icons/fa'; // Import the check circle icon
 
-function AdminBorrowBook({ onBookReturned }) {
-  const [records, setRecords] = useState([]);
-  const [messageText, setMessageText] = useState('');
-  const [isMessageVisible, setIsMessageVisible] = useState(false);
-  const authToken = localStorage.getItem('authToken');
+function AdminBorrowBook({ onBookReturned }) { // Receive the refresh function as a prop
+    const [error, setError] = useState('');
+    const [borrowingRecords, setBorrowingRecords] = useState([]);
+    const [borrowedBooksCount, setBorrowedBooksCount] = useState(0); // New state for borrowed book count
+    const navigate = useNavigate();
+    const authToken = localStorage.getItem('authToken');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [messageText, setMessageText] = useState('');
+    const [isMessageVisible, setIsMessageVisible] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const res = await axios.get(
-        'https://library-management-system-3qap.onrender.com/api/library/borrowing-records/',
-        { headers: { Authorization: `Token ${authToken}` } }
-      );
-      setRecords(res.data.borrowingRecords.filter(r => !r.is_returned));
-    })();
-  }, [authToken]);
 
-  const handleReturn = async id => {
-    try {
-      const res = await axios.patch(
-        `https://library-management-system-3qap.onrender.com/api/library/borrowing-records/${id}/return/`,
-        {},
-        { headers: { Authorization: `Token ${authToken}` } }
-      );
-      setMessageText(res.data.message);
-      setIsMessageVisible(true);
-      setRecords(rs => rs.filter(r => r.id !== id));
-      // tell the UserHome to re-fetch their count
-      if (onBookReturned) onBookReturned();
-    } catch (err) {
-      console.error(err);
-      setMessageText('Failed to return book.');
-      setIsMessageVisible(true);
-    }
-  };
+    const fetchAcceptedBorrowingRecords = async () => {
+        try {
+            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/borrowing-records/', { // Fetch all borrowing records
+                headers: {
+                    'Authorization': `Token ${authToken}`,
+                },
+            });
+            const activeBorrows = response.data.borrowingRecords.filter(record => !record.is_returned);
+            setBorrowingRecords(activeBorrows);
+            setBorrowedBooksCount(activeBorrows.length); // Set the count of currently borrowed books
+        } catch (error) {
+            console.error('Error fetching borrowing records:', error);
+            setError('Failed to fetch borrowing records.');
+        }
+    };
 
-  return (
-    <div className="dashboard">
-      <Sidebar />
-      {isMessageVisible && <Message message={messageText} onClose={() => setIsMessageVisible(false)} />}
-      <table className="borrowed-table">
-        <thead>
-          <tr>
-            <th>ID</th><th>User</th><th>Title</th><th>Borrowed</th><th>Due</th><th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {records.map(r => (
-            <tr key={r.id}>
-              <td>{r.id}</td>
-              <td>{r.user}</td>
-              <td>{r.book_title}</td>
-              <td>{new Date(r.borrow_date).toLocaleDateString()}</td>
-              <td>{new Date(r.return_date).toLocaleDateString()}</td>
-              <td>
-                <button onClick={() => handleReturn(r.id)}>
-                  <FaCheckCircle /> Return
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+    useEffect(() => {
+        fetchAcceptedBorrowingRecords();
+    }, []);
+
+    const handleReturnBook = async (recordId, bookId, borrowerUsername) => {
+        try {
+            const response = await axios.patch(
+                `https://library-management-system-3qap.onrender.com/api/library/borrowing-records/${recordId}/return/`,
+                {},
+                {
+                    headers: {
+                        'Authorization': `Token ${authToken}`,
+                    },
+                }
+            );
+            console.log(`Borrowing record with ID ${recordId} marked as returned:`, response.data);
+
+            // Remove the returned record from the local state
+            setBorrowingRecords(borrowingRecords.filter(record => record.id !== recordId));
+            setBorrowedBooksCount(borrowedBooksCount - 1);
+            setMessageText(response.data.message);
+            setIsMessageVisible(true);
+
+            // Decrease the request count for the user in localStorage
+            const currentRequestCount = parseInt(localStorage.getItem('requestCount')) || 0;
+            const newRequestCount = currentRequestCount > 0 ? currentRequestCount - 1 : 0;
+            localStorage.setItem('requestCount', newRequestCount.toString());
+
+            // Optionally, trigger the onBookReturned function to refresh UserHome
+            if (onBookReturned) {
+                onBookReturned();
+            }
+        } catch (error) {
+            console.error('Error returning book:', error);
+            setMessageText('Failed to return book.');
+            setIsMessageVisible(true);
+        }
+    };
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value.toLowerCase());
+    };
+
+    const handleCloseMessage = () => {
+        setIsMessageVisible(false);
+        setMessageText('');
+    };
+
+
+    const filteredBorrowingRecords = borrowingRecords.filter(record => {
+        const searchMatch =
+            record.book_title.toLowerCase().includes(searchQuery) ||
+            record.user.toLowerCase().includes(searchQuery); // Assuming 'user' is the username
+
+        return searchMatch;
+    });
+
+    const calculateDueDateInfo = (borrowDate, returnDate) => {
+        const today = new Date();
+        const due = new Date(returnDate); // Assuming returnDate is the due date
+        const timeDifference = due.getTime() - today.getTime();
+        const daysLeft = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+        if (daysLeft >= 0) {
+            return { text: `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`, overdue: false };
+        } else {
+            const daysPassed = Math.abs(daysLeft);
+            return { text: `${daysPassed} day${daysPassed !== 1 ? 's' : ''} overdue`, overdue: true };
+        }
+    };
+
+    return (
+        <div className='dashboard'>
+            <Sidebar />
+            <section className='searchBooks' style={{ display: 'flex', marginBottom: '40px' }}>
+                <input
+                    className='searchBar'
+                    placeholder='Search by Book Title or Borrower'
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
+                <section className='totalBorrowed' style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+                    <p className='label' style={{ color: 'black' }}>Borrowed Books</p>
+                    <p className='label' style={{ fontSize: '100px', marginTop: '-10px' }}>{borrowedBooksCount}</p>
+                </section>
+            </section>
+            <section className='borrowedBooksTable'>
+                {!error && filteredBorrowingRecords.length > 0 && (
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Borrow ID</th>
+                                <th>Borrower</th>
+                                <th>Title</th>
+                                <th>Borrow Date</th>
+                                <th>Due Date</th> {/* Renamed to Due Date */}
+                                <th>Due Date Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredBorrowingRecords.map(record => {
+                                const dueDateInfo = calculateDueDateInfo(record.borrow_date, record.return_date); // Using return_date as due date
+                                return (
+                                    <tr key={record.id} className={dueDateInfo.overdue ? 'overdue-row' : ''}>
+                                        <td>{record.id}</td>
+                                        <td>{record.user}</td>
+                                        <td>{record.book_title}</td>
+                                        <td>{new Date(record.borrow_date).toLocaleDateString()}</td>
+                                        <td>{new Date(record.return_date).toLocaleDateString()}</td> {/* Displaying return_date as due date */}
+                                        <td>
+                                            {!record.is_returned && (
+                                                <span className={dueDateInfo.overdue ? 'overdue-text' : 'due-date-text'}>
+                                                    {dueDateInfo.text}
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td>
+                                            {!record.is_returned && (
+                                                <button
+                                                    className='rtn-btn'
+                                                    onClick={() => handleReturnBook(record.id, record.book_id, record.user)}
+                                                >
+                                                    <FaCheckCircle className='return-icon' /> Mark as Returned
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                )}
+                {!error && filteredBorrowingRecords.length === 0 && (
+                    <p>No active borrowing records found.</p>
+                )}
+                {isMessageVisible && (
+                    <Message message={messageText} onClose={handleCloseMessage} />
+                )}
+
+            </section>
+        </div>
+    );
 }
 
 export default AdminBorrowBook;
