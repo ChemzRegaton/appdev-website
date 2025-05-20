@@ -174,3 +174,36 @@
 .full-message-content .close-button:hover {
     color: #222;
 }
+
+.reply-toggle {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.reply-section {
+    margin-top: 10px;
+}
+
+.reply-section textarea {
+    width: 100%;
+    height: 70px;
+    margin-top: 5px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.send-reply {
+    margin-top: 5px;
+    background-color: #28a745;
+    color: white;
+    padding: 5px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}

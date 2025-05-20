@@ -23,6 +23,7 @@ import UserHistoryLogs from './user/userHistoryLogs.jsx'
 import UserBorrowBook from './user/userBorrowBook.jsx'
 import UserBookReturn from './user/userBookReturn.jsx'
 import UserBookManage from './user/userBookManage.jsx'
+import UserNewFeature from './user/userNewFeature.jsx'
 
 
 
@@ -54,6 +55,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/user/borrowBooks" element={<UserBorrowBook />} />
         <Route path="/user/bookReturn" element={<UserBookReturn />} />
         <Route path="/user/bookManage" element={<UserBookManage />} />
+        <Route path="/user/returnedlist" element={<UserNewFeature />} />
 
 
 
