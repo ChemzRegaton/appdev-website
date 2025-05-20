@@ -81,19 +81,30 @@ function UserNotification() {
                 {notifications.length === 0 && !error && <p>No new notifications.</p>}
                 {notifications.map(notification => (
                     <div key={notification.id} className='notification-item'>
-                        {notification.created_at && <p className='date-received' style={{color: 'red', marginRight: '10px', fontWeight: 'bold'}}> ({formatDate(notification.created_at)})</p>}
-                        {notification.message}
+                        {notification.created_at && (
+                            <p className='date-received' style={{color: 'red', marginRight: '10px', fontWeight: 'bold'}}>
+                                ({formatDate(notification.created_at)})
+                            </p>
+                        )}
+                        {/* Display different messages based on status */}
+                        {notification.status === 'admin_reply' ? (
+                            <p style={{fontWeight: 'bold'}}>Admin Reply:</p>
+                        ) : (
+                            ''
+                        )}
+                        <p>{notification.message}</p> {/* This will contain the reply content */}
                         {notification.book_title && <p>Book: {notification.book_title}</p>}
                         {notification.status === 'accepted' && <p className='success'>Accepted</p>}
                         {notification.status === 'rejected' && <p className='error'>Rejected</p>}
                         {notification.status === 'returned' && <p className='success'>Returned</p>}
+                        {/* Add more conditions for other statuses if needed */}
+
                         <button className='delete-button' onClick={() => deleteNotification(notification.id)}>
                             Delete
                         </button>
                         <hr />
                     </div>
-                ))}
-            </div>
+                ))}            </div>
         </div>
     );
 }
