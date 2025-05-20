@@ -32,6 +32,12 @@ const Sidebar = () => {
           BOOKS
         </li>
         <li 
+          onClick={() => navigate('/user/returnedlist')}
+          className={location.pathname === '/user/returnedlist' ? 'active' : ''}
+        >
+          RETURNED
+        </li>
+        <li 
           onClick={() => navigate('/user/userProfiles')}
           className={location.pathname === '/user/userProfiles' ? 'active' : ''}
         >
