@@ -6,7 +6,6 @@ import './userHome.css';
 import Sidebar from './sideBar.jsx';
 import AddBookPanel from './components/additionalInfo.jsx';
 import Message from './components/message.jsx';
-import defaultBookCover from '../assets/Default_book_cover.webp';
 
 function UserHome() {
   const navigate = useNavigate();
