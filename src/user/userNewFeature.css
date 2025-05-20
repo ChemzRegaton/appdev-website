@@ -1,0 +1,64 @@
+.dashboard {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 250px;
+  padding: 20px;
+  color: black;
+}
+
+.borrowedBooksTable {
+  width: 95%;
+  max-width: 1200px;
+  background-color: #031C3E;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 1);
+  border-radius: 10px;
+  color: white;
+}
+
+.borrowedBooksTable h1 {
+  margin-bottom: 20px;
+  color: #FAA61A;
+}
+
+.borrowedBooksTable .no-data {
+  color: #ddd;
+  font-style: italic;
+}
+
+.borrowedBooksTable table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.borrowedBooksTable th,
+.borrowedBooksTable td {
+  padding: 10px;
+  text-align: left;
+  font-size: 0.9em;
+  word-break: break-word;
+}
+
+.borrowedBooksTable th {
+  position: sticky;
+  top: 0;
+  background-color: #031C3E;
+  color: white;
+  z-index: 1;
+}
+
+
+.borrowedBooksTable tr:hover {
+  background-color: #8c5902;
+  cursor: default;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
