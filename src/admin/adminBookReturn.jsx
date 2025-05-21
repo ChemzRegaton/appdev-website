@@ -14,7 +14,8 @@ function AdminBorrowRequest() {
     const [requestCount, setRequestCount] = useState(localStorage.getItem('requestCount') || 0);
 
     // Define the base URL for your API
-    const API_BASE_URL = 'http://192.168.33.92:8000';
+    //const API_BASE_URL = 'http://192.168.33.92:8000';
+    const API_BASE_URL = 'https://library-management-system-3qap.onrender.com';
     // Note: You had 'https://appdev-integrative-28.onrender.com' for fetchPendingBorrowRequests
     // and 'https://library-management-system-3qap.onrender.com' for handleAcceptRequest/handleRejectRequest.
     // I'm standardizing to 'https://library-management-system-3qap.onrender.com' based on your previous examples.

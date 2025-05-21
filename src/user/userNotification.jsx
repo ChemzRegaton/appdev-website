@@ -11,7 +11,8 @@ function UserNotification() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const authToken = localStorage.getItem('authToken');
-    const API_BASE_URL = 'http://192.168.33.92:8000'; // Make sure this is correct for your setup
+    //const API_BASE_URL = 'http://192.168.33.92:8000'; // Make sure this is correct for your setup
+    const API_BASE_URL = 'https://library-management-system-3qap.onrender.com';
 
     const fetchNotifications = async () => {
         if (!authToken) {

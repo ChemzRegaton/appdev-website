@@ -17,7 +17,8 @@ function AdminBorrowBook({ onBookReturned }) {
   const [messageText, setMessageText] = useState('');
   const [isMessageVisible, setIsMessageVisible] = useState(false);
 
-  const API_BASE_URL = 'http://192.168.33.92:8000'; // Ensure this matches your Django server's IP!
+  //const API_BASE_URL = 'http://192.168.33.92:8000'; // Ensure this matches your Django server's IP!
+  const API_BASE_URL = 'https://library-management-system-3qap.onrender.com';
 
   const fetchAcceptedBorrowingRecords = async () => {
     try {

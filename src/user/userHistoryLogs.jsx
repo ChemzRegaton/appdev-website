@@ -11,7 +11,8 @@ function FAQ() {
     const [contactMessage, setContactMessage] = useState('');
 
     // Define the base URL for your API
-    const API_BASE_URL = 'http://192.168.33.92:8000';
+    //const API_BASE_URL = 'http://192.168.33.92:8000';
+    const API_BASE_URL = 'https://library-management-system-3qap.onrender.com';
 
     const faqData = [
         {

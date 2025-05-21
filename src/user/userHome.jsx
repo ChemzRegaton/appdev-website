@@ -14,7 +14,8 @@ function UserHome() {
   // Define the base URL for your API
   // **IMPORTANT: Ensure this IP address matches your Django server's actual IP.**
   // If your Django server is running on a different IP, this will cause issues.
-  const API_BASE_URL = 'http://192.168.33.92:8000'; // Make sure this matches your Django server's IP
+  //const API_BASE_URL = 'http://192.168.33.92:8000'; // Make sure this matches your Django server's IP
+  const API_BASE_URL = 'https://library-management-system-3qap.onrender.com';
 
   const [isAddBookPanelVisible, setAddBookPanelVisible] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
