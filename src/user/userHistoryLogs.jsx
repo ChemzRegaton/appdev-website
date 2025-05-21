@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import logoImage from '../assets/LOGO_WORD.png';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,9 @@ function FAQ() {
     const [expandedQuestion, setExpandedQuestion] = useState(null);
     const [contactSubject, setContactSubject] = useState('');
     const [contactMessage, setContactMessage] = useState('');
+
+    // Define the base URL for your API
+    const API_BASE_URL = 'http://192.168.33.92:8000';
 
     const faqData = [
         {
@@ -65,10 +68,10 @@ function FAQ() {
 
         try {
             const response = await axios.post(
-                'https://library-management-system-3qap.onrender.com/api/auth/messages/send/', // Use your API endpoint
+                `${API_BASE_URL}/api/auth/messages/send/`, // Use API_BASE_URL here
                 {
                     subject: contactSubject,
-                    message: contactMessage,
+                    content: contactMessage,
                 },
                 {
                     headers: {

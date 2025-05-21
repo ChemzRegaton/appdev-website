@@ -1,6 +1,6 @@
+// src/components/AdminBorrowRequest.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import logoImage from '../assets/LOGO_WORD.png';
 import { useNavigate } from 'react-router-dom';
 import './adminBookReturn.css'; // You might need a specific CSS for this page
 import Sidebar from './sideBar.jsx';
@@ -13,13 +13,21 @@ function AdminBorrowRequest() {
     const authToken = localStorage.getItem('authToken');
     const [requestCount, setRequestCount] = useState(localStorage.getItem('requestCount') || 0);
 
+    // Define the base URL for your API
+    const API_BASE_URL = 'http://192.168.33.92:8000';
+    // Note: You had 'https://appdev-integrative-28.onrender.com' for fetchPendingBorrowRequests
+    // and 'https://library-management-system-3qap.onrender.com' for handleAcceptRequest/handleRejectRequest.
+    // I'm standardizing to 'https://library-management-system-3qap.onrender.com' based on your previous examples.
+    // Please verify if 'https://appdev-integrative-28.onrender.com' is still needed for any specific endpoint.
+
+
     useEffect(() => {
         fetchPendingBorrowRequests();
     }, []);
 
     const fetchPendingBorrowRequests = async () => {
         try {
-            const response = await axios.get('https://appdev-integrative-28.onrender.com/api/library/admin/requests/pending/', {
+            const response = await axios.get(`${API_BASE_URL}/api/library/admin/requests/pending/`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },
@@ -34,7 +42,7 @@ function AdminBorrowRequest() {
     const handleAcceptRequest = async (requestId) => {
         try {
             const response = await axios.patch(
-                `https://library-management-system-3qap.onrender.com/api/library/requests/${requestId}/accept/`,
+                `${API_BASE_URL}/api/library/requests/${requestId}/accept/`,
                 {},
                 {
                     headers: {
@@ -63,7 +71,7 @@ function AdminBorrowRequest() {
     const handleRejectRequest = async (requestId) => {
         try {
             const response = await axios.patch(
-                `https://library-management-system-3qap.onrender.com/api/library/borrow_requests/${requestId}/reject/`, // Verify your reject endpoint
+                `${API_BASE_URL}/api/library/borrow_requests/${requestId}/reject/`, // Verify your reject endpoint
                 {},
                 {
                     headers: {
@@ -82,7 +90,11 @@ function AdminBorrowRequest() {
     const UserProfileImage = ({ profilePicture }) => {
         const getValidImageSource = () => {
             if (profilePicture) {
-                return profilePicture.startsWith('http') || profilePicture.startsWith('data:image') ? profilePicture : `${window.location.origin}${profilePicture}`;
+                // Check if the profilePicture is an absolute URL or data URL
+                // If not, prepend window.location.origin
+                return profilePicture.startsWith('http') || profilePicture.startsWith('data:image')
+                    ? profilePicture
+                    : `${window.location.origin}${profilePicture}`;
             }
             return defaultProfileImage;
         };

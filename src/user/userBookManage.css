@@ -122,6 +122,8 @@ button {
   border-bottom: 1px solid #444;
 }
 
+
+
 /* Sticky header */
 .booksTable th {
   position: sticky;
@@ -133,7 +135,8 @@ button {
 /* Hover highlight only */
 .booksTable tbody tr:hover {
   background-color: #8c5902;
-  cursor: default;
+  flex: 1;
+  cursor: pointer;
 }
 
 /* Column widths */

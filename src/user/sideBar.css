@@ -1,49 +1,100 @@
-
 .sidebar {
-    width: 250px;
+    width: fit-content; /* Default desktop width */
     background-color: #031C3E;
     color: white;
     position: fixed;
     top: 0;
     left: 0;
-    height: 100%;
-    padding-top: 10px;
+    height: 100%; /* Make sidebar full height */
+    padding-top: 20px; /* Increased padding top */
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  
-  .sidebar h2 {
+    box-sizing: border-box; /* Include padding in width/height */
+    z-index: 20; /* Ensure sidebar is above main content */
+    transition: width 0.3s ease; /* Smooth transition for width change */
+}
+
+
+.sidebar h2 {
     text-align: center;
     margin-bottom: 30px;
-  }
-  
-  .sidebar ul {
+    font-size: 1.8em; /* Adjusted font size */
+    padding: 0 10px; /* Added horizontal padding */
+}
+
+.sidebar ul {
     list-style: none;
     padding: 0;
-    width: 100%;
-  }
-  
-  .sidebar li {
-    padding: 20px;
+    width: 100%; /* Make ul take full width of sidebar */
+}
+
+.sidebar li {
+    position: relative; /* Needed for absolute positioning of badge */
     text-align: center;
     cursor: pointer;
     font-weight: 800;
-  }
-  
-  .sidebar li:hover {
+    box-sizing: border-box;
+    padding: 15px 10px; /* Added padding for clickable area */
+    margin: 5px 10px; /* Add margin around items */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflow if text is too long */
+    text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+}
+
+.sidebar li:hover {
     background-color: #FAA61A;
-    background-size: cover;
-    margin: 2px;
     border-radius: 10px;
     color: black;
-  }
+}
 
-  .sidebar li.active {
+.sidebar li.active {
     background-color: #FAA61A;
     color: black;
-    margin: 2px;
     border-radius: 10px;
 }
-  
+
+.sidebar .notification-badge {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 7px; /* Adjusted padding for a smaller badge */
+    font-size: 0.7em; /* Slightly smaller font size */
+    position: absolute;
+    top: 50%; /* Center vertically */
+    right: 10px; /* Position to the right */
+    transform: translateY(-50%); /* Adjust for perfect vertical centering */
+    line-height: 1; /* Ensure text is vertically centered within the badge */
+    min-width: 18px; /* Ensure badge is always circular */
+    text-align: center;
+    display: flex; /* Use flex to perfectly center content */
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* --- Media Queries (with adjustments) --- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 5rem; /* A fixed small width is often better than 10% for tiny screens */
+        padding-top: 10px; /* Adjust padding for smaller sidebar */
+    }
+
+    .sidebar h2 {
+        font-size: 1.2em; /* Smaller font for title */
+        word-break: break-word; /* Allow long titles to break */
+        margin-bottom: 15px; /* Reduce margin */
+    }
+
+    
+
+    .sidebar li {
+        font-size: 0.8rem; /* Smaller font for menu items */
+        padding: 10px 5px; /* Adjust padding */
+        margin: 5px 2px; /* Adjust margin */
+        white-space: normal; /* Allow text to wrap if necessary */
+        text-overflow: unset; /* Remove ellipsis for smaller text */
+    }
+  }

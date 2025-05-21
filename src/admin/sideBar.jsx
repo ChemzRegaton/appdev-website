@@ -1,7 +1,7 @@
   import React from 'react';
   import { useNavigate, useLocation } from 'react-router-dom';
   import './sideBar.css';
-  import logoImage from '../assets/LOGO_WORD2.png'; 
+  import logoImage from '../assets/Raven12.png'; 
 
   const Sidebar = () => {
     const navigate = useNavigate();
@@ -9,18 +9,10 @@
 
     return (
       <div className="sidebar">
-        <section
-                style={{
-                  backgroundImage: `url(${logoImage})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  height: '22vh',
-                  width: '20vh',
-                  display: 'flex',
-        
-                }}
-              ></section>
         <ul>
+          <ul>
+              <img src={logoImage} alt="Logo" className="logo" style={{ width: '120px' }} />
+          </ul>
           <li 
             onClick={() => navigate('/admin')}
             className={location.pathname === '/admin' ? 'active' : ''}

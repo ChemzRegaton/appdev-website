@@ -19,6 +19,9 @@ function AdminHome() {
     const [allBorrowingRecords, setAllBorrowingRecords] = useState([]);
     const authToken = localStorage.getItem('authToken');
 
+    // Define the base URL for your API
+    const API_BASE_URL = 'http://192.168.33.92:8000';
+
     const handleQuickBook = () => {
         navigate('/admin/bookManage');
     };
@@ -33,7 +36,7 @@ function AdminHome() {
 
     const fetchTotalBooks = async () => {
         try {
-            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/books/');
+            const response = await axios.get(`${API_BASE_URL}/api/library/books/`); // Use API_BASE_URL
             setTotalBooks(response.data.total_books);
         } catch (error) {
             console.error('Error fetching total books:', error);
@@ -44,7 +47,7 @@ function AdminHome() {
     const fetchTotalBorrowedBooks = async () => {
         const token = localStorage.getItem('authToken');
         try {
-            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/borrowing-records/', {
+            const response = await axios.get(`${API_BASE_URL}/api/library/borrowing-records/`, { // Use API_BASE_URL
                 headers: {
                     'Authorization': `Token ${token}`,
                 },
@@ -58,7 +61,7 @@ function AdminHome() {
 
     const fetchBorrowRequests = async () => {
         try {
-            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/admin/requests/pending/', {
+            const response = await axios.get(`${API_BASE_URL}/api/library/admin/requests/pending/`, { // Use API_BASE_URL
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 },
@@ -90,7 +93,7 @@ function AdminHome() {
     const handleAcceptRequest = async (requestId) => {
         try {
             const response = await axios.patch(
-                `https://library-management-system-3qap.onrender.com/api/library/requests/${requestId}/accept/`,
+                `${API_BASE_URL}/api/library/requests/${requestId}/accept/`, // Use API_BASE_URL
                 {},
                 {
                     headers: {
@@ -119,7 +122,7 @@ function AdminHome() {
     const UserProfileImage = ({ profilePicture }) => {
         const getValidImageSource = () => {
             if (profilePicture) {
-                return  profilePicture.startsWith('http') ||  profilePicture.startsWith('data:image') ? profilePicture : `${window.location.origin}${profilePicture}`;
+                return profilePicture.startsWith('http') || profilePicture.startsWith('data:image') ? profilePicture : `${window.location.origin}${profilePicture}`;
             }
             return defaultProfileImage;
 

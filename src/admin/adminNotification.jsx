@@ -8,13 +8,16 @@ function AdminNotification() {
     const [error, setError] = useState('');
     const [newMessagesCount, setNewMessagesCount] = useState(0);
     const [replyBoxes, setReplyBoxes] = useState({}); // Track which reply boxes are open
-    const [replies, setReplies] = useState({}); // Store reply text
+    const [replies, setReplies] = useState({}); // Store reply text // Store reply text
     const authToken = localStorage.getItem('authToken');
     const pollingInterval = 5000; // 5 seconds
 
+    // Define the base URL for your API
+    const API_BASE_URL = 'http://192.168.33.92:8000';
+
     const fetchNewMessagesCount = async () => {
         try {
-            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/auth/admin/messages/unread/count/', {
+            const response = await axios.get(`${API_BASE_URL}/api/auth/admin/messages/unread/count/`, {
                 headers: { 'Authorization': `Token ${authToken}` },
             });
             setNewMessagesCount(response.data.count);
@@ -26,7 +29,7 @@ function AdminNotification() {
 
     const fetchMessages = async () => {
         try {
-            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/auth/admin/messages/', {
+            const response = await axios.get(`${API_BASE_URL}/api/auth/admin/messages/`, {
                 headers: { 'Authorization': `Token ${authToken}` },
             });
             setMessages(response.data);
@@ -53,7 +56,7 @@ function AdminNotification() {
 
         try {
             await axios.post(
-                `https://library-management-system-3qap.onrender.com/api/library/admin/messages/${messageId}/reply/`,
+                `${API_BASE_URL}/api/auth/admin/messages/${messageId}/reply/`,
                 { reply: replyText },
                 { headers: { 'Authorization': `Token ${authToken}` } }
             );
@@ -89,13 +92,15 @@ function AdminNotification() {
                     <div className="message-list">
                         {messages.map((message) => (
                             <div key={message.id} className={`message-item ${message.is_read ? 'read' : 'unread'}`}>
-                                <div className="message-header" style={{ backgroundColor: 'white', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <p><strong>Sender:</strong> {message.user.username}</p>
-                                    <p><strong>Sent At:</strong> {new Date(message.sent_at).toLocaleString()}</p>
-                                </div>
                                 <div className="message-content">
-                                    <p><strong>Subject:</strong> {message.subject}</p>
-                                    <p style={{ fontWeight: 'lighter' }}>{message.message}</p>
+                                    <div style={{gap: '10px'}}>
+                                        <p><strong>Subject:</strong> {message.subject}</p>
+                                        <p><strong>Sender:</strong> {message.user.username}</p>
+                                        <p><strong>Sent At:</strong> {new Date(message.sent_at).toLocaleString()}</p>
+                                    </div>
+                                    
+                                    <p style={{ fontWeight: 'lighter' }}>{message.content}</p>
+                                    
 
                                     <button onClick={() => handleReplyToggle(message.id)} className="reply-toggle">
                                         {replyBoxes[message.id] ? 'Cancel' : 'Reply'}

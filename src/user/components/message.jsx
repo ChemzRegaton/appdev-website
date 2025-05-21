@@ -23,6 +23,9 @@ function Message({ onClose, onProfileUpdated, message }) { // Add onProfileUpdat
         birthdate: '',
     });
 
+    // Define the base URL for your API
+    const API_BASE_URL = 'http://192.168.33.92:8000';
+
     useEffect(() => {
         fetchCurrentUserInfo();
     }, []);
@@ -34,7 +37,7 @@ function Message({ onClose, onProfileUpdated, message }) { // Add onProfileUpdat
                 console.error('Authentication token not found.');
                 return;
             }
-            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/auth/profile/', {
+            const response = await axios.get(`${API_BASE_URL}/api/auth/profile/`, { // Use API_BASE_URL
                 headers: {
                     'Authorization': `Token ${token}`,
                 },
@@ -77,7 +80,7 @@ function Message({ onClose, onProfileUpdated, message }) { // Add onProfileUpdat
             };
 
             const response = await axios.put(
-                'https://library-management-system-3qap.onrender.com/api/auth/profile/', // Your new API endpoint
+                `${API_BASE_URL}/api/auth/profile/`, // Use API_BASE_URL
                 profilePayload,
                 {
                     headers: {

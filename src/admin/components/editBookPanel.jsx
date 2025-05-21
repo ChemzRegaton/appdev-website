@@ -22,13 +22,16 @@ function EditBookPanel({ bookId, onClose }) {
     const [currentImageName, setCurrentImageName] = useState(''); // To display current file name
     const [newCoverImage, setNewCoverImage] = useState(null); // State for a potentially new image file
 
+    // Define the base URL for your API
+    const API_BASE_URL = 'http://192.168.33.92:8000';
+
     useEffect(() => {
         const fetchBookDetails = async () => {
             if (bookId) {
                 setIsSubmitting(true);
                 setErrorMessage('');
                 try {
-                    const response = await axios.get(`https://library-management-system-3qap.onrender.com/api/library/books/${bookId}/`);
+                    const response = await axios.get(`${API_BASE_URL}/api/library/books/${bookId}/`);
                     const bookData = response.data;
                     setEditingBook({
                         title: bookData.title || '',
@@ -42,7 +45,7 @@ function EditBookPanel({ bookId, onClose }) {
                     });
 
                     if (bookData.cover_image) {
-                        setSelectedImage(bookData.cover_image);
+                        setSelectedImage(`${API_BASE_URL}${bookData.cover_image}`); // Use API_BASE_URL for current image
                         const parts = bookData.cover_image.split('/');
                         setCurrentImageName(parts[parts.length - 1]);
                     }
@@ -89,7 +92,7 @@ function EditBookPanel({ bookId, onClose }) {
             }
 
             const response = await axios.put( // Or axios.patch
-                `https://library-management-system-3qap.onrender.com/api/library/books/${bookId}/`,
+                `${API_BASE_URL}/api/library/books/${bookId}/`,
                 formData,
                 {
                     headers: {
@@ -197,8 +200,7 @@ function EditBookPanel({ bookId, onClose }) {
                     <button type="button" onClick={onClose}>Cancel</button>
                 </section>
             </form>
-        </part>
-
+            </part>
         </div>
     );
 }

@@ -1,0 +1,89 @@
+/* components/BookDetailsModal.css */
+.bookDetailsModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+}
+
+.bookDetailsModal {
+    display: block;
+    background: #031C3E;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+    height: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.bookDetailsModal h2 {
+    margin-top: 0;
+    color: white;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.bookDetailsContent {
+    display: flex;
+    color: white;
+    gap: 20px;
+    padding: 10px 0;
+}
+
+.bookCover {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bookCover img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.bookInformation {
+    display: flex;
+    color: white;
+    flex-direction: column;
+    flex: 2;
+}
+
+.bookInformation p {
+    margin: 5px 0;
+    color: white;
+}
+
+.bookInformation strong {
+    color: #FAA61A;
+}
+
+.bookDetailsModal button {
+    background-color: #FAA61A;
+    color: black;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.bookDetailsModal button:hover {
+    background-color: #031C3E;
+    color: white;
+}
+
+/* Add this to userBookManage.css */
+.booksTable tbody tr {
+    cursor: pointer; /* Change cursor to pointer */
+}

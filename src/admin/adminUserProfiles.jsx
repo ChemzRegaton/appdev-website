@@ -21,6 +21,9 @@ function AdminUserProfiles() {
     const [isGeneralMessageVisible, setIsGeneralMessageVisible] = useState(false);
     const [preventRowClick, setPreventRowClick] = useState(false);
 
+    // Define the base URL for your API
+    const API_BASE_URL = 'http://192.168.33.92:8000';
+
     useEffect(() => {
         fetchUsersWithBorrowCount();
     }, []);
@@ -47,7 +50,7 @@ function AdminUserProfiles() {
                 setError('Authentication token not found.');
                 return;
             }
-            const response = await axios.get('https://library-management-system-3qap.onrender.com/api/auth/users/', {
+            const response = await axios.get(`${API_BASE_URL}/api/auth/users/`, { // Use API_BASE_URL
                 headers: {
                     'Authorization': `Token ${localStorage.getItem('authToken')}`,
                 },
@@ -86,7 +89,7 @@ function AdminUserProfiles() {
 
         try {
             const response = await axios.post(
-                `https://library-management-system-3qap.onrender.com/api/library/notifications/send-return/${userId}/`,
+                `${API_BASE_URL}/api/library/notifications/send-return/${userId}/`, // Use API_BASE_URL
                 {},
                 {
                     headers: {

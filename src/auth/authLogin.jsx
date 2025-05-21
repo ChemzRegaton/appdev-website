@@ -16,7 +16,7 @@ function Login() {
       console.log("Sending username:", username);
       console.log("Sending password:", password);
       const response = await axios.post(
-        'https://library-management-system-3qap.onrender.com/api/auth/login/',
+        'http://192.168.33.92:8000/api/auth/login/',
         {
           username: username,
           password: password,

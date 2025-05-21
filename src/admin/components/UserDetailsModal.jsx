@@ -5,6 +5,9 @@ import { FaIdCard, FaUser, FaEnvelope, FaUserCircle, FaBriefcase, FaGraduationCa
 import { FaUserSlash } from 'react-icons/fa'; // Icon for no profile
 
 function UserDetailsModal({ user, onClose }) {
+    // Define the base URL for your API
+    const API_BASE_URL = 'http://192.168.33.92:8000';
+
     if (!user) {
         return null;
     }
@@ -17,7 +20,7 @@ function UserDetailsModal({ user, onClose }) {
                     {user.profile_picture ? (
                         <div className="modalProfilePictureContainer">
                             <img
-                                src={`https://library-management-system-3qap.onrender.com${user.profile_picture}`}
+                                src={`${API_BASE_URL}${user.profile_picture}`} // Using API_BASE_URL
                                 alt={`${user.username}'s Profile`}
                                 className="modalLargeProfilePicture"
                             />

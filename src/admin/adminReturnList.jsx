@@ -10,13 +10,16 @@ function AdminReturnedBook() {
   const [returnedBooksCount, setReturnedBooksCount] = useState(0);
   const authToken = localStorage.getItem('authToken');
 
+  // Define the base URL for your API
+  const API_BASE_URL = 'http://192.168.33.92:8000';
+
   useEffect(() => {
     fetchReturnedBorrowingRecords();
   }, []);
 
   const fetchReturnedBorrowingRecords = async () => {
     try {
-      const response = await axios.get('https://library-management-system-3qap.onrender.com/api/library/borrowing-records/', {
+      const response = await axios.get(`${API_BASE_URL}/api/library/borrowing-records/`, { // Use API_BASE_URL
         headers: {
           'Authorization': `Token ${authToken}`,
         },

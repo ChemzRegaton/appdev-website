@@ -20,7 +20,7 @@ function SignUp() {
 
     setError('');
 
-      const response = await axios.post('https://library-management-system-3qap.onrender.com/api/auth/register/', {
+      const response = await axios.post('http://192.168.33.92:8000/api/auth/register/', {
         username,
         email,
         password,

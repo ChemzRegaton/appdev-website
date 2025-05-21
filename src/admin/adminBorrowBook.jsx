@@ -1,13 +1,10 @@
 // src/components/AdminBorrowBook.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import logoImage from '../assets/LOGO_WORD.png';
 import { useNavigate } from 'react-router-dom';
 import './adminBorrowBook.css';
 import Sidebar from './sideBar.jsx';
 import Message from './components/message.jsx';
-import AddBookPanel from './components/addBookPanel.jsx';
-import EditBookPanel from './components/editBookPanel.jsx';
 import { FaCheckCircle } from 'react-icons/fa';
 
 function AdminBorrowBook({ onBookReturned }) {
@@ -20,23 +17,12 @@ function AdminBorrowBook({ onBookReturned }) {
   const [messageText, setMessageText] = useState('');
   const [isMessageVisible, setIsMessageVisible] = useState(false);
 
-  // fetch the current per-user request count
-  const refreshUserRequestCount = async () => {
-    try {
-      const res = await axios.get(
-        'https://library-management-system-3qap.onrender.com/api/library/user/request-count/',
-        { headers: { Authorization: `Token ${authToken}` } }
-      );
-      if (onBookReturned) onBookReturned(res.data.request_count);
-    } catch (err) {
-      console.error('Could not refresh user request count', err);
-    }
-  };
+  const API_BASE_URL = 'http://192.168.33.92:8000'; // Ensure this matches your Django server's IP!
 
   const fetchAcceptedBorrowingRecords = async () => {
     try {
       const response = await axios.get(
-        'https://library-management-system-3qap.onrender.com/api/library/borrowing-records/',
+        `${API_BASE_URL}/api/library/borrowing-records/`,
         { headers: { Authorization: `Token ${authToken}` } }
       );
       const activeBorrows = response.data.borrowingRecords.filter(r => !r.is_returned);
@@ -45,6 +31,9 @@ function AdminBorrowBook({ onBookReturned }) {
     } catch (error) {
       console.error('Error fetching borrowing records:', error);
       setError('Failed to fetch borrowing records.');
+      if (error.response?.status === 401) {
+        navigate('/login');
+      }
     }
   };
 
@@ -55,22 +44,29 @@ function AdminBorrowBook({ onBookReturned }) {
   const handleReturnBook = async (recordId) => {
     try {
       const response = await axios.patch(
-        `https://library-management-system-3qap.onrender.com/api/library/borrowing-records/${recordId}/return/`,
-        {},
+        `${API_BASE_URL}/api/library/borrowing-records/${recordId}/return/`,
+        {}, // Empty body for status update
         { headers: { Authorization: `Token ${authToken}` } }
       );
 
-      setBorrowingRecords(br => br.filter(r => r.id !== recordId));
-      setBorrowedBooksCount(c => c - 1);
+      setBorrowingRecords(prevRecords => prevRecords.filter(r => r.id !== recordId));
+      setBorrowedBooksCount(prevCount => prevCount - 1);
+
       setMessageText(response.data.message);
       setIsMessageVisible(true);
 
-      // refresh the authoritative user request count
-      await refreshUserRequestCount();
+      // Re-fetch all records to update display and ensure consistency after a return.
+      fetchAcceptedBorrowingRecords();
+
+      // Notify parent component if a callback is provided.
+      if (onBookReturned) {
+        onBookReturned();
+      }
 
     } catch (error) {
       console.error('Error returning book:', error);
-      setMessageText('Failed to return book.');
+      const errorMessage = error.response?.data?.message || 'Failed to return book.';
+      setMessageText(errorMessage);
       setIsMessageVisible(true);
     }
   };
@@ -80,15 +76,19 @@ function AdminBorrowBook({ onBookReturned }) {
 
   const filteredBorrowingRecords = borrowingRecords.filter(record =>
     record.book_title.toLowerCase().includes(searchQuery) ||
+    // Adjust 'record.user' based on how your backend returns borrower's name (e.g., record.user.username)
     record.user.toLowerCase().includes(searchQuery)
   );
 
-  const calculateDueDateInfo = (borrowDate, returnDate) => {
+  const calculateDueDateInfo = (borrowDate, dueDate) => {
     const today = new Date();
-    const due = new Date(returnDate);
+    const due = new Date(dueDate);
     const diff = due.getTime() - today.getTime();
     const days = Math.ceil(diff / (1000 * 3600 * 24));
-    if (days >= 0) return { text: `${days} day${days !== 1 ? 's' : ''} left`, overdue: false };
+
+    if (days >= 0) {
+      return { text: `${days} day${days !== 1 ? 's' : ''} left`, overdue: false };
+    }
     return { text: `${Math.abs(days)} day${Math.abs(days) !== 1 ? 's' : ''} overdue`, overdue: true };
   };
 
@@ -108,7 +108,8 @@ function AdminBorrowBook({ onBookReturned }) {
         </section>
       </section>
       <section className='borrowedBooksTable'>
-        {!error && filteredBorrowingRecords.length > 0 && (
+        {error && <p className="error-message">{error}</p>}
+        {!error && filteredBorrowingRecords.length > 0 ? (
           <table>
             <thead>
               <tr>
@@ -123,14 +124,15 @@ function AdminBorrowBook({ onBookReturned }) {
             </thead>
             <tbody>
               {filteredBorrowingRecords.map(record => {
-                const dueInfo = calculateDueDateInfo(record.borrow_date, record.return_date);
+                const dueInfo = calculateDueDateInfo(record.borrow_date, record.due_date);
                 return (
                   <tr key={record.id} className={dueInfo.overdue ? 'overdue-row' : ''}>
                     <td>{record.id}</td>
-                    <td>{record.user}</td>
+                    {/* Display borrower's username or full name. Adjust 'record.user' as needed. */}
+                    <td>{record.user_username || record.user}</td>
                     <td>{record.book_title}</td>
                     <td>{new Date(record.borrow_date).toLocaleDateString()}</td>
-                    <td>{new Date(record.return_date).toLocaleDateString()}</td>
+                    <td>{new Date(record.due_date).toLocaleDateString()}</td>
                     <td className={dueInfo.overdue ? 'overdue-text' : 'due-date-text'}>{dueInfo.text}</td>
                     <td>
                       {!record.is_returned && (
@@ -144,8 +146,9 @@ function AdminBorrowBook({ onBookReturned }) {
               })}
             </tbody>
           </table>
+        ) : (
+          !error && <p>No active borrowing records found.</p>
         )}
-        {!error && filteredBorrowingRecords.length === 0 && <p>No active borrowing records found.</p>}
         {isMessageVisible && <Message message={messageText} onClose={handleCloseMessage} />}
       </section>
     </div>
