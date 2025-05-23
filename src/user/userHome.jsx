@@ -227,7 +227,7 @@ function UserHome() {
 
       {/* Display Request Count prominently */}
       <section className='request-count-display'>
-        <p>Your remaining requests: <strong>{requestCount}</strong> / 3</p>
+        <p>Your remaining requests: <strong>{3 - requestCount}</strong> </p>
       </section>
 
       <section className='card-container'>
